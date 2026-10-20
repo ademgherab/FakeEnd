@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MockApi.Data.Repositories;
 
 namespace MockApi.Data.Configuration;
@@ -35,23 +36,23 @@ public static class ServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
 
-        var connectionString = configuration.GetConnectionString("Default");
+        services.AddDbContext<MockApiDbContext>(
+            (serviceProvider, options) =>
+            {
+                var connectionString = serviceProvider
+                    .GetRequiredService<IOptions<DatabaseOptions>>()
+                    .Value.Default;
 
-        if (string.IsNullOrWhiteSpace(connectionString))
-        {
-            throw new InvalidOperationException(
-                "ConnectionStrings:Default must contain a PostgreSQL connection string."
-            );
-        }
-
-        services.AddDbContext<MockApiDbContext>(options =>
-            options
-                .UseNpgsql(
-                    connectionString,
-                    npgsql =>
-                        npgsql.MigrationsAssembly(typeof(MockApiDbContext).Assembly.GetName().Name!)
-                )
-                .UseSnakeCaseNamingConvention()
+                options
+                    .UseNpgsql(
+                        connectionString,
+                        npgsql =>
+                            npgsql.MigrationsAssembly(
+                                typeof(MockApiDbContext).Assembly.GetName().Name!
+                            )
+                    )
+                    .UseSnakeCaseNamingConvention();
+            }
         );
 
         services.AddScoped<IProjectRepository, ProjectRepository>();

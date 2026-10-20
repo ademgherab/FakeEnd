@@ -1,10 +1,12 @@
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using MockApi.Api.Observability;
 using MockApi.Core.Configuration;
 using MockApi.Core.Errors;
 using MockApi.Core.Serialization;
 using MockApi.Data.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddMockApiLogging();
 
 builder.WebHost.ConfigureKestrel(
     (context, options) =>
@@ -33,16 +35,16 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     JsonDefaults.Configure(options.SerializerOptions)
 );
 
-builder.Services.AddHealthChecks();
+builder.Services.AddMockApiHealthChecks();
 
 var app = builder.Build();
 
 app.UseMockApiRequestContext();
+app.UseMockApiRequestLogging();
 app.UseMockApiErrorHandling();
 app.UseMockApiManagementTransport();
 
-app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
-
+app.MapMockApiHealthChecks();
 app.MapControllers();
 
 app.Run();
