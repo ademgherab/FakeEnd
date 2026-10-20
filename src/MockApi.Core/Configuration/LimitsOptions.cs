@@ -57,6 +57,9 @@ public sealed class LimitsOptions : IValidatableObject
     public int MaxFieldNameLength { get; init; }
 
     [Range(1, 1000)]
+    public int MaxFieldsPerObject { get; init; }
+
+    [Range(1, 1000)]
     public int MaxEnumValues { get; init; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

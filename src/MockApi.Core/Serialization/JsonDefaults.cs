@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using MockApi.Core.Schemas;
 
 namespace MockApi.Core.Serialization;
 
@@ -32,6 +33,11 @@ public static class JsonDefaults
         if (!options.Converters.Any(converter => converter is StrictStringEnumConverterFactory))
         {
             options.Converters.Insert(0, new StrictStringEnumConverterFactory());
+        }
+
+        if (!options.Converters.Any(converter => converter is SchemaNodeJsonConverter))
+        {
+            options.Converters.Add(new SchemaNodeJsonConverter());
         }
     }
 }
