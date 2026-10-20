@@ -6,6 +6,7 @@ using MockApi.Data.Configuration;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMockApiDatabaseOptions(builder.Configuration);
+builder.Services.AddMockApiData(builder.Configuration);
 builder.Services.AddMockApiOptions(builder.Configuration);
 
 builder

@@ -17,21 +17,21 @@ PostgreSQL 16+ schema exactly as specified, mapped with EF Core and reversible m
 
 ## Implementation checklist
 
-- [ ] `projects`: `id` uuid PK default `gen_random_uuid()`, `slug varchar(16) UNIQUE`, `name varchar(60) NULL`, `edit_token_hash bytea NOT NULL`, timestamps `timestamptz`; index on `expires_at`.
-- [ ] `endpoints`: FK cascade, `method varchar(6)` with CHECK, `path`/`path_normalized varchar(200)`, `schema_version smallint`, `schema_json jsonb`, `settings_json jsonb`, `uq_endpoints_route (project_id, method, path_normalized)`.
-- [ ] `request_logs`: identity `bigint`, FK cascade to project, nullable `endpoint_id` with `ON DELETE SET NULL`, `request_body text`, index `(project_id, id DESC)`.
-- [ ] `project_usage_daily`: composite PK `(project_id, day)`, cascade.
-- [ ] Map `schema_json`/`settings_json` as `jsonb` (owned JSON or string converter). Round-trip must preserve the schema array order.
-- [ ] `edit_token_hash` stored as `bytea` length 32.
-- [ ] No `IP` column anywhere.
-- [ ] Migration applies cleanly to an empty database and rolls back.
+- [x] `projects`: `id` uuid PK default `gen_random_uuid()`, `slug varchar(16) UNIQUE`, `name varchar(60) NULL`, `edit_token_hash bytea NOT NULL`, timestamps `timestamptz`; index on `expires_at`.
+- [x] `endpoints`: FK cascade, `method varchar(6)` with CHECK, `path`/`path_normalized varchar(200)`, `schema_version smallint`, `schema_json jsonb`, `settings_json jsonb`, `uq_endpoints_route (project_id, method, path_normalized)`.
+- [x] `request_logs`: identity `bigint`, FK cascade to project, nullable `endpoint_id` with `ON DELETE SET NULL`, `request_body text`, index `(project_id, id DESC)`.
+- [x] `project_usage_daily`: composite PK `(project_id, day)`, cascade.
+- [x] Map `schema_json`/`settings_json` as `jsonb` (owned JSON or string converter). Round-trip must preserve the schema array order.
+- [x] `edit_token_hash` stored as `bytea` length 32.
+- [x] No `IP` column anywhere.
+- [x] Migration applies cleanly to an empty database and rolls back.
 
 ## Acceptance criteria
 
-- [ ] `dotnet ef database update` creates all four tables, constraints, and indexes.
-- [ ] Deleting a project cascades to endpoints, logs, usage; deleting an endpoint nulls `request_logs.endpoint_id`.
-- [ ] Duplicate `(project_id, method, path_normalized)` is rejected by the DB, not only by app code.
-- [ ] JSON column round-trip test proves field order and numeric types are preserved.
+- [x] `dotnet ef database update` creates all four tables, constraints, and indexes.
+- [x] Deleting a project cascades to endpoints, logs, usage; deleting an endpoint nulls `request_logs.endpoint_id`.
+- [x] Duplicate `(project_id, method, path_normalized)` is rejected by the DB, not only by app code.
+- [x] JSON column round-trip test proves field order and numeric types are preserved.
 
 ## Tests
 
