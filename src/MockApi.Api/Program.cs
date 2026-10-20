@@ -1,3 +1,4 @@
+using MockApi.Api.Authorization;
 using MockApi.Api.Observability;
 using MockApi.Core.Configuration;
 using MockApi.Core.Errors;
@@ -26,6 +27,7 @@ builder.Services.AddMockApiDatabaseOptions(builder.Configuration);
 builder.Services.AddMockApiData(builder.Configuration);
 builder.Services.AddMockApiOptions(builder.Configuration);
 builder.Services.AddMockApiErrors(builder.Configuration);
+builder.Services.AddMockApiProjectAuthorization();
 
 builder
     .Services.AddControllers()
