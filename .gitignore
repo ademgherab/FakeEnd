@@ -1,0 +1,29 @@
+# Build output
+bin/
+obj/
+artifacts/
+TestResults/
+coverage*.json
+coverage*.xml
+*.coverage
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local secrets and overrides
+appsettings.Local.json
+.env
+.env.*
+!.env.example
+
+# Deployment
+*.pubxml
+publish/
