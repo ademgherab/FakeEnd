@@ -1,9 +1,11 @@
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using MockApi.Api.Observability;
 using MockApi.Core.Configuration;
 using MockApi.Core.Serialization;
 using MockApi.Data.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddMockApiLogging();
 
 builder.Services.AddMockApiDatabaseOptions(builder.Configuration);
 builder.Services.AddMockApiOptions(builder.Configuration);
@@ -16,12 +18,13 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     JsonDefaults.Configure(options.SerializerOptions)
 );
 
-builder.Services.AddHealthChecks();
+builder.Services.AddMockApiHealthChecks();
 
 var app = builder.Build();
 
-app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
+app.UseMockApiRequestLogging();
 
+app.MapMockApiHealthChecks();
 app.MapControllers();
 
 app.Run();

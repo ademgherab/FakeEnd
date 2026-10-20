@@ -17,21 +17,21 @@ Operable-by-default service: structured logs with correlation, secret redaction,
 
 ## Implementation checklist
 
-- [ ] JSON console sink in production; readable console in development.
-- [ ] Enrich each log with `RequestId`, `TraceId`, `Method`, `Path`, `StatusCode`, `ElapsedMs`.
-- [ ] Destructure/drop `Authorization`; guarantee no `editToken` appears in logs (add a unit test with a canary token).
-- [ ] `/health/live`: always `200` when the process is up, no DB dependency.
-- [ ] `/health/ready`: `200` when PostgreSQL responds; `503` when it does not. Tag with `ready`; do not expose connection strings.
-- [ ] Health endpoints are outside `/api/v1` and are not rate limited.
-- [ ] Do not log request bodies on the Management API (samples must never be persisted or logged, §5.4).
-- [ ] Avoid logging the runtime request body during normal success; the log writer owns the truncated copy.
+- [x] JSON console sink in production; readable console in development.
+- [x] Enrich each log with `RequestId`, `TraceId`, `Method`, `Path`, `StatusCode`, `ElapsedMs`.
+- [x] Destructure/drop `Authorization`; guarantee no `editToken` appears in logs (add a unit test with a canary token).
+- [x] `/health/live`: always `200` when the process is up, no DB dependency.
+- [x] `/health/ready`: `200` when PostgreSQL responds; `503` when it does not. Tag with `ready`; do not expose connection strings.
+- [x] Health endpoints are outside `/api/v1` and are not rate limited.
+- [x] Do not log request bodies on the Management API (samples must never be persisted or logged, §5.4).
+- [x] Avoid logging the runtime request body during normal success; the log writer owns the truncated copy.
 
 ## Acceptance criteria
 
-- [ ] Killing PostgreSQL flips readiness to `503` within the configured probe timeout and recovers automatically.
-- [ ] A request with a bearer token produces zero log lines containing the token value.
-- [ ] Logs from a single request can be grepped by `X-Request-Id`.
-- [ ] No PII/sample data from `/infer` appears in logs.
+- [x] Killing PostgreSQL flips readiness to `503` within the configured probe timeout and recovers automatically.
+- [x] A request with a bearer token produces zero log lines containing the token value.
+- [x] Logs from a single request can be grepped by `X-Request-Id`.
+- [x] No PII/sample data from `/infer` appears in logs.
 
 ## Tests
 
