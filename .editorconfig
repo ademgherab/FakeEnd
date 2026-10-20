@@ -37,3 +37,6 @@ dotnet_diagnostic.CA1848.severity = none
 
 [*.{json,jsonc}]
 insert_final_newline = true
+
+[src/MockApi.Data/Migrations/*.cs]
+dotnet_diagnostic.IDE0161.severity = none
