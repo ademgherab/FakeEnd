@@ -657,6 +657,14 @@ public sealed class SampleInferrer
 
                 if (IsPriceKey(tokens))
                 {
+                    if (data is InferredInteger)
+                    {
+                        return Generator(
+                            "randomInt",
+                            Parameters(("min", 1), ("max", CountMaximum(sample)))
+                        );
+                    }
+
                     return PriceGenerator(sample);
                 }
 
