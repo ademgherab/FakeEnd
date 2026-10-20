@@ -741,6 +741,18 @@ public sealed class SchemaValidator
             return true;
         }
 
+        if (jsonValue.TryGetValue<int>(out var integer))
+        {
+            value = integer;
+            return true;
+        }
+
+        if (jsonValue.TryGetValue<long>(out var longValue))
+        {
+            value = longValue;
+            return true;
+        }
+
         return jsonValue.TryGetValue<JsonElement>(out var element)
             && element.ValueKind == JsonValueKind.Number
             && element.TryGetDouble(out value);
