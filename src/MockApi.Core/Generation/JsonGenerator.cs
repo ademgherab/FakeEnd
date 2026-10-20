@@ -41,10 +41,25 @@ public sealed class JsonGenerator
     {
         ArgumentNullException.ThrowIfNull(schema);
 
-        return Estimate(schema.Root, root: true, options ?? new GenerationOptions());
+        return EstimateValueCount(schema, schema.Root as ArrayNode, options);
     }
 
-    private static long Estimate(SchemaNode? node, bool root, GenerationOptions options)
+    /// <summary>
+    /// Estimates the worst-case value count while treating <paramref name="listNode"/> as the list
+    /// whose length comes from settings/pagination instead of its own <c>length</c>.
+    /// </summary>
+    public long EstimateValueCount(
+        Schema schema,
+        SchemaNode? listNode,
+        GenerationOptions? options = null
+    )
+    {
+        ArgumentNullException.ThrowIfNull(schema);
+
+        return Estimate(schema.Root, listNode, options ?? new GenerationOptions());
+    }
+
+    private static long Estimate(SchemaNode? node, SchemaNode? listNode, GenerationOptions options)
     {
         if (node is null)
         {
@@ -62,7 +77,7 @@ public sealed class JsonGenerator
 
                 foreach (var field in objectNode.Fields)
                 {
-                    total = SaturatingAdd(total, Estimate(field.Node, root: false, options));
+                    total = SaturatingAdd(total, Estimate(field.Node, listNode, options));
                 }
 
                 return total;
@@ -70,11 +85,11 @@ public sealed class JsonGenerator
 
             case ArrayNode arrayNode:
             {
-                var length = root
+                var length = ReferenceEquals(arrayNode, listNode)
                     ? options.ListMax ?? arrayNode.Length?.Max ?? 3
                     : arrayNode.Length?.Max ?? 3;
 
-                var itemCount = Estimate(arrayNode.Item, root: false, options);
+                var itemCount = Estimate(arrayNode.Item, listNode, options);
 
                 return length <= 0 ? 0 : SaturatingMultiply(length, itemCount);
             }
@@ -279,7 +294,7 @@ public sealed class JsonGenerator
                     throw new InvalidOperationException("The root array has no item node.");
                 }
 
-                WriteNode(array.Item, writer, listIndex: index);
+                WriteNode(array.Item, writer, listIndex: index + _options.ListIndexOffset);
             }
 
             writer.WriteEndArray();

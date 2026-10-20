@@ -214,6 +214,32 @@ public sealed class JsonGeneratorTests
     }
 
     [Fact]
+    public void Auto_id_continues_from_the_pagination_offset()
+    {
+        var schema = Deserialize(
+            """
+            {"version":1,"root":{"type":"array","item":{"type":"object","fields":[
+              {"name":"id","node":{"type":"integer","generator":{"name":"autoId","params":{"start":5}}}}
+            ]}}}
+            """
+        );
+
+        var result = Generator
+            .Generate(
+                schema,
+                new GenerationOptions
+                {
+                    ListMin = 2,
+                    ListMax = 2,
+                    ListIndexOffset = 10,
+                }
+            )!
+            .AsArray();
+
+        Assert.Equal([15L, 16L], result.Select(item => item!["id"]!.GetValue<long>()));
+    }
+
+    [Fact]
     public void Auto_id_outside_a_list_is_a_random_value()
     {
         var schema = LeafSchema("integer", """{"name":"autoId","params":{"start":5}}""");
